@@ -1,25 +1,36 @@
-import Bienvenida from "./components/Bienvenida";
+import { useState } from "react";
 import Cabecera from "./components/Cabecera";
-import TarjetaActividad from "./components/TarjetaActividad";
 import Navegacion from "./components/Navegacion";
-import PiePagina from "./components/PiePagina";
-
+import Cartelera from "./pages/Cartelera";
+import { actividades } from "./data/actividades";
 function App() {
-  return (
-    <>
-      <Navegacion />
-      <Cabecera />
-        <main className="container py-4">
-          <Bienvenida />
-            <div className="row g-4">
-              <div className="col-12 col-md-6 col-lg-4">
-            <TarjetaActividad />
-          </div>
-        </div>
-      </main>
-      <PiePagina />
-    </>
-  );
+const [categoria, setCategoria] = useState("Todas");
+const visibles = categoria === "Todas"
+? actividades
+: actividades.filter((actividad) => actividad.categoria === categoria);
+function inscribirTemporal(actividad) {
+console.log("Actividad seleccionada:", actividad.nombre);
 }
-
+return (
+<>
+<Cabecera />
+<Navegacion />
+<main className="container py-4">
+<select
+className="form-select mb-4"
+value={categoria}
+onChange={(evento) => setCategoria(evento.target.value)}
+>
+<option>Todas</option>
+<option>Música</option>
+<option>Artes visuales</option>
+</select>
+<Cartelera
+actividades={visibles}
+onInscribir={inscribirTemporal}
+/>
+</main>
+</>
+);
+}
 export default App;
