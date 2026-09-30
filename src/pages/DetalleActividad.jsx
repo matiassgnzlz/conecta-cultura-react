@@ -5,7 +5,9 @@ const { id } = useParams();
 const actividad = actividades.find(
 (item) => item.id === Number(id)
 );
-if (!actividad) return <p>La actividad solicitada no existe.</p>;
+if (!actividad) {
+return <p>La actividad solicitada no existe.</p>;
+}
 return (
 <main className="container py-4">
 <h1>{actividad.nombre}</h1>
