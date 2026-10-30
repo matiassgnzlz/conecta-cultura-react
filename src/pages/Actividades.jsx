@@ -1,30 +1,43 @@
-import Cartelera from "./Cartelera";
-import { Col, Container, Row } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Alert, Col, Container, Row, Spinner } from "react-bootstrap";
+import { listarActividades } from "../services/actividadService";
 import TarjetaActividad from "../components/TarjetaActividad";
-import { actividades } from "../data/actividades";
-
 
 function Actividades() {
-function inscribir(actividad) {
-console.log("Actividad seleccionada:", actividad.nombre);
-}
-return (
-    <main className="container py-4">
-        <h1>Actividades</h1>
-        <Container className="py-4">
-            <Row className="g-4">
-                {actividades.map((actividad) => (
-                <Col xs={12} md={6} lg={4} key={actividad.id}>
-                    <TarjetaActividad
-                    actividad={actividad}
-                    onInscribir={inscribir}
-                    />
-                </Col>
-                ))}
-            </Row>
-        </Container>
+  const [actividades, setActividades] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState("");
 
-    </main>
-);
+  useEffect(() => {
+    async function cargar() {
+      try {
+        setError("");
+        setActividades(await listarActividades());
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setCargando(false);
+      }
+    }
+    cargar();
+  }, []);
+
+  if (cargando) return <Spinner aria-label="Cargando actividades" />;
+  if (error) return <Alert variant="danger">{error}</Alert>;
+  if (actividades.length === 0) return <Alert>No hay actividades.</Alert>;
+
+  return (
+    <Container className="py-4">
+      <h1>Actividades</h1>
+      <Row className="g-4">
+        {actividades.map(actividad => (
+          <Col xs={12} md={6} lg={4} key={actividad.id}>
+            <TarjetaActividad actividad={actividad} />
+          </Col>
+        ))}
+      </Row>
+    </Container>
+  );
 }
+
 export default Actividades;
